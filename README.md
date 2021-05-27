@@ -17,6 +17,9 @@
 * Grid Layout
 * Адаптивная верстка
 * JavaScript
+* React
+* JSX
+* React Hooks
 
 
 **Итоговый результат**
