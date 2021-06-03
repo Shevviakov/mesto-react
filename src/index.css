@@ -1,3 +1,8 @@
+/* Black background non-bem dirty hack */
+body {
+  background: #000;
+}
+
 @import url("./vendor/normalize.css");
 @import url("./vendor/fonts/inter.css");
 
