@@ -15,7 +15,7 @@ function Main(props) {
         <div className="profile__info">
           <h1 className="profile__fullname">{currentUser.name}</h1>
           <button className="profile__edit-btn" type="button" aria-label="Кнопка редактирования профиля" onClick={props.onEditProfile}></button>
-          <p className="profile__bio">{currentUser.description}</p>
+          <p className="profile__bio">{currentUser.about}</p>
         </div>
         <button className="profile__add-card-btn" type="button" aria-label="Кнопка добавления новой карточки" onClick={props.onAddPlace}></button>
       </section>
