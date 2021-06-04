@@ -61,19 +61,16 @@ class Api {
       .then(this._checkResponse);
   }
 
-  addLike(cardId) {
-    return this._like('PUT', cardId);
-  }
-
-  removeLike(cardId) {
-    return this._like('DELETE', cardId);
+  changeLikeCardStatus(cardId, isLiked) {
+    const method = isLiked ? 'PUT' : 'DELETE';
+    return this._like(method, cardId);
   }
 
   setAvatar(avatar) {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: 'PATCH',
       headers: this._headers,
-      body: JSON.stringify({avatar: avatar})
+      body: JSON.stringify(avatar)
     })
       .then(this._checkResponse);
   }

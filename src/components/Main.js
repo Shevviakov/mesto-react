@@ -1,49 +1,35 @@
 import React from 'react';
 
-import Api from '../utils/api';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+
 import Card from './Card';
 
 function Main(props) {
-  const [userName, setUserName] = React.useState('');
-  const [userDescription, setUserDescription] = React.useState('');
-  const [userAvatar, setUserAvatar] = React.useState('');
-  const [cards, setCards] = React.useState([]);
-
-  React.useEffect(() => {
-    Api.getUserInfo()
-      .then(({name, about, avatar}) => {
-        setUserName(name);
-        setUserDescription(about);
-        setUserAvatar(avatar);
-      })
-      .catch(res => {
-        console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    Api.getInitialCards()
-      .then(cards => {
-        setCards(cards)
-      })
-      .catch(res => {
-        console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
-      });
-  }, []);
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
+    currentUser &&
     <main className="content">
       <section className="profile page__profile">
-        <button className="profile__avatar-btn" style={{ backgroundImage: `url(${userAvatar})` }} aria-label="Кнопка обновления аватара" onClick={props.onEditAvatar}></button>
+        <button className="profile__avatar-btn" style={{ backgroundImage: `url(${currentUser.avatar})` }} aria-label="Кнопка обновления аватара" onClick={props.onEditAvatar}></button>
         <div className="profile__info">
-          <h1 className="profile__fullname">{userName}</h1>
+          <h1 className="profile__fullname">{currentUser.name}</h1>
           <button className="profile__edit-btn" type="button" aria-label="Кнопка редактирования профиля" onClick={props.onEditProfile}></button>
-          <p className="profile__bio">{userDescription}</p>
+          <p className="profile__bio">{currentUser.about}</p>
         </div>
         <button className="profile__add-card-btn" type="button" aria-label="Кнопка добавления новой карточки" onClick={props.onAddPlace}></button>
       </section>
       <section className="cards page__cards" aria-label="Карточки мест">
-        { cards.map( card => <Card key={card._id} card={card} onCardClick={props.onCardClick} /> ) }
+        { props.cards.map(
+          card => <Card
+              key={card._id}
+              card={card}
+              onCardClick={props.onCardClick}
+              onCardLike={props.onCardLike}
+              onCardDelete={props.onCardDelete}
+            />
+          )
+        }
       </section>
       {props.children}
       <article className="popup popup_type_card-delete-confirmation">
