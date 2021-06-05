@@ -22,38 +22,19 @@ function App() {
   const [isCardDeleteConfirmationPopupOpen, setCardDeleteConfirmationPopupOpen] = React.useState(false)
   const [selectedCard, setSelectedCard] = React.useState(null);
 
-  const [closeByEsc] = React.useState(() => (e) => {
-    if (e.key === 'Escape') {
-      closeAllPopups();
-    }
-  });
-
   const [onCardDeletionConfirm, setCardDeletionConfirm] = React.useState(() => () => {})
 
+
   React.useEffect(() => {
-    Api.getUserInfo()
-      .then((user) => {
+    Promise.all([Api.getUserInfo(), Api.getInitialCards() ])
+      .then(([user, cards]) => {
         setCurrentUser(user);
-        return Api.getInitialCards()
-      })
-      .then(cards => {
-        setCards(cards)
+        setCards(cards);
       })
       .catch(res => {
         console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
       });
   }, []);
-
-  React.useEffect(() => {
-    if (isEditProfilePopupOpen || isAddPlacePopupOpen
-          || isEditAvatarPopupOpen || selectedCard || isCardDeleteConfirmationPopupOpen) {
-        document.addEventListener('keydown', closeByEsc);
-      } else {
-        document.removeEventListener('keydown', closeByEsc);
-      }
-  }, [isEditProfilePopupOpen, isAddPlacePopupOpen,
-        isEditAvatarPopupOpen, selectedCard, isCardDeleteConfirmationPopupOpen, closeByEsc]);
-
 
   function handleEditAvatarClick() {
     setEditAvatarPopupOpen(true);
@@ -93,11 +74,11 @@ function App() {
         Api.deleteCard(card._id)
         .then(() => {
           setCards((state) => state.filter((c) => c._id !== card._id));
+          closeAllPopups()
         })
         .catch(res => {
           console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
         })
-        .finally(() => closeAllPopups());
     });
     setCardDeleteConfirmationPopupOpen(true);
 
@@ -107,33 +88,33 @@ function App() {
     Api.setUserInfo(newUser)
       .then(user => {
         setCurrentUser(user);
+        closeAllPopups()
       })
       .catch(res => {
         console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
       })
-      .finally(() => closeAllPopups());
   }
 
   function handleAvatarUpdate(newAvatar) {
     Api.setAvatar(newAvatar)
       .then(user => {
         setCurrentUser(user);
+        closeAllPopups()
       })
       .catch(res => {
         console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
       })
-      .finally(() => closeAllPopups());
   }
 
   function handleAddPlace(newCard) {
     Api.addNewCard(newCard)
       .then(card => {
         setCards([card, ...cards]);
+        closeAllPopups()
       })
       .catch(res => {
         console.log(`Error '${res.status} ${res.statusText}' ${res.url}`);
       })
-      .finally(() => closeAllPopups());
   }
 
   return (

@@ -3,6 +3,20 @@ import React from 'react';
 
 
 function Popup(props) {
+  React.useEffect(() => {
+    function closeByEsc(evt) {
+      if(evt.key === 'Escape') {
+        props.onClose()
+      }
+    }
+
+    if (props.isOpen) {
+      document.addEventListener('keydown', closeByEsc);
+    }
+
+    return () => document.removeEventListener('keydown', closeByEsc);
+  }, [props])
+
   function onBackgroundClick(e) {
       const targetClassList = e.target.classList;
       if (targetClassList.contains('popup'))
